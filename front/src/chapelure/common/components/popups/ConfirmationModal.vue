@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useConfirmation } from '@common/composables/popups/confirmation.ts';
+import { useConfirmation } from '@chapelure/common/composables/popups/confirmation.ts';
 import { CheckIcon, XIcon } from 'lucide-vue-next';
 import { onMounted, useTemplateRef } from 'vue';
 

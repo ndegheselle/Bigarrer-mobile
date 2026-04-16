@@ -1,11 +1,7 @@
-import { PocketbaseCrud, usePocketBase } from "@api/pocketbase.ts";
-import { type UsersResponse, Collections, UsersTypeOptions } from "@api/types.g.ts";
-import type { ChildrenData } from "@features/users/data/childrens";
-
-export { UsersTypeOptions as UserProfilType };
+import { PocketbaseCrud, usePocketBase } from "@chapelure/api/pocketbase.ts";
+import { type UsersResponse, Collections } from "@common/types.g";
 
 type UserExpand = {
-    childrens?: ChildrenData[];
 };
 
 export type UserData = UsersResponse<UserExpand>;

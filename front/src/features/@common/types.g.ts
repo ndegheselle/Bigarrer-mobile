@@ -11,8 +11,6 @@ export enum Collections {
 	Mfas = "_mfas",
 	Otps = "_otps",
 	Superusers = "_superusers",
-	Childrens = "childrens",
-	Interests = "interests",
 	Users = "users",
 }
 
@@ -94,37 +92,15 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
-export type ChildrensRecord = {
-	age?: number
-	created: IsoAutoDateString
-	id: string
-	interests?: RecordIdString[]
-	name?: string
-	updated: IsoAutoDateString
-	user: RecordIdString
-}
-
-export type InterestsRecord = {
-	created: IsoAutoDateString
-	id: string
-	name: string
-	updated: IsoAutoDateString
-}
-
-export enum UsersTypeOptions {
-	"PERSONNAL" = "PERSONNAL",
-	"ASSOCIATION" = "ASSOCIATION",
-	"SCHOOL" = "SCHOOL",
-}
 export type UsersRecord = {
-	childrens?: RecordIdString[]
+	avatar?: FileNameString
 	created: IsoAutoDateString
 	email: string
 	emailVisibility?: boolean
 	id: string
+	name?: string
 	password: string
 	tokenKey: string
-	type?: UsersTypeOptions
 	updated: IsoAutoDateString
 	verified?: boolean
 }
@@ -135,8 +111,6 @@ export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRec
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
-export type ChildrensResponse<Texpand = unknown> = Required<ChildrensRecord> & BaseSystemFields<Texpand>
-export type InterestsResponse<Texpand = unknown> = Required<InterestsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -147,8 +121,6 @@ export type CollectionRecords = {
 	_mfas: MfasRecord
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
-	childrens: ChildrensRecord
-	interests: InterestsRecord
 	users: UsersRecord
 }
 
@@ -158,8 +130,6 @@ export type CollectionResponses = {
 	_mfas: MfasResponse
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
-	childrens: ChildrensResponse
-	interests: InterestsResponse
 	users: UsersResponse
 }
 

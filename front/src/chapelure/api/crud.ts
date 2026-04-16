@@ -1,4 +1,4 @@
-import type { BaseSystemFields } from "@api/types.g";
+import type { BaseSystemFields } from "@common/types.g";
 export type BaseEntity = BaseSystemFields;
 
 export enum SortDirection {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EnumTheme, useSettings } from '@common/composables/settings';
+import { EnumTheme, useSettings } from '@chapelure/common/composables/settings';
 import { PaletteIcon } from 'lucide-vue-next';
 
 const { currentLanguage, changeTheme, changeLang } = useSettings();

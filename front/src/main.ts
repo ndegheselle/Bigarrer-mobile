@@ -1,9 +1,9 @@
 import './style.css';
 
-import { initDatabase } from '@api/pocketbase';
-import { i18n } from '@common/i18n';
-import { applyDefaultBehaviors } from '@common/utils/dom';
-import { usersBeforeEach } from '@features/users/routes';
+import { initDatabase } from '@chapelure/api/pocketbase';
+import { i18n } from '@chapelure/common/i18n';
+import { applyDefaultBehaviors } from '@chapelure/common/utils/dom';
+import { usersBeforeEach } from '@chapelure/auth/routes';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';

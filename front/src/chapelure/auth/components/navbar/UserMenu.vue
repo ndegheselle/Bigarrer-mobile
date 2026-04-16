@@ -13,7 +13,7 @@ const { isLoggedIn, logout } = useAuth();
             <div tabindex="0" role="button" class="btn btn-circle">
                 <div class="avatar">
                     <div class="rounded-full">
-                        <img src="https://placeholder.pagebee.io/api/plain/64/64" />
+                        <img src="https://placeholder.pagebee.io/api/plain/32/32" />
                     </div>
                 </div>
             </div>
