@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "@common/styles/transitions.css";
+@import "@common/styles/themes.css";
+@import "@common/styles/helpers.css";
+
+@plugin "daisyui" {
+    themes: false;
+  /*themes: light --default, dark;*/
+}
