@@ -13,7 +13,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true,
         "paths": {
-            "@chapelure/*": [ "./src/chapelure/*" ],
+            "@chapelure/*": [ "./src/features/@chapelure/*" ],
             "@common/*": [ "./src/features/@common/*" ],
             "@features/*": [ "./src/features/*" ],
             "@/*": [ "./src/*" ]
