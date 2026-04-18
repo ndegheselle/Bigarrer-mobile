@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 import HomePage from '@/pages/HomePage.vue';
 import authRoutes from '@features/users/routes';
+import arRoutes from '@features/AR/routes';
 
 const routes: RouteRecordRaw[] = [
     {
@@ -14,6 +15,7 @@ const routes: RouteRecordRaw[] = [
                 component: HomePage,
             },
             ...authRoutes,
+            ...arRoutes,
         ]
     }
 ];

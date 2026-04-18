@@ -3,7 +3,8 @@ import SettingsMenu from '@chapelure/common/components/navbar/SettingsMenu.vue';
 import AlertsContainer from '@chapelure/common/components/popups/AlertsContainer.vue';
 import ConfirmationModal from '@chapelure/common/components/popups/ConfirmationModal.vue';
 import UserMenu from '@features/users/components/navbar/UserMenu.vue';
-import { routesNames } from '@features/users/routes';
+import { routesNames as userRoutesNames } from '@features/users/routes';
+import { routesNames as arRoutesNames } from '@features/AR/routes';
 import { MenuIcon } from 'lucide-vue-next';
 </script>
 
@@ -17,7 +18,11 @@ import { MenuIcon } from 'lucide-vue-next';
                     </summary>
                     <ul class="menu dropdown-content bg-base-200 rounded-box w-52 p-2 shadow">
                         <li>
-                            <RouterLink :to="{ name: routesNames.login }">{{ $t('users.login.title') }}
+                            <RouterLink :to="{ name: arRoutesNames.test }">{{ $t('AR.test.title') }}
+                            </RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink :to="{ name: userRoutesNames.login }">{{ $t('users.login.title') }}
                             </RouterLink>
                         </li>
                     </ul>
