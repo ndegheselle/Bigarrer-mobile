@@ -2,7 +2,7 @@
 import SettingsMenu from '@chapelure/common/components/navbar/SettingsMenu.vue';
 import AlertsContainer from '@chapelure/common/components/popups/AlertsContainer.vue';
 import ConfirmationModal from '@chapelure/common/components/popups/ConfirmationModal.vue';
-import UserMenu from '@chapelure/auth/components/navbar/UserMenu.vue';
+import UserMenu from '@features/users/components/navbar/UserMenu.vue';
 import { MenuIcon } from 'lucide-vue-next';
 </script>
 
