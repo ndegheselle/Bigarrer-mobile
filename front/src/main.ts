@@ -16,7 +16,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
 });
-router.beforeEach(authGuard(routesNames));
+// router.beforeEach(authGuard(routesNames));
 
 createApp(App)
 .use(i18n)

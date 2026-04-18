@@ -3,45 +3,41 @@ import SettingsMenu from '@chapelure/common/components/navbar/SettingsMenu.vue';
 import AlertsContainer from '@chapelure/common/components/popups/AlertsContainer.vue';
 import ConfirmationModal from '@chapelure/common/components/popups/ConfirmationModal.vue';
 import UserMenu from '@features/users/components/navbar/UserMenu.vue';
+import { routesNames } from '@features/users/routes';
 import { MenuIcon } from 'lucide-vue-next';
 </script>
 
 <template>
     <div class="min-h-screen flex flex-col">
         <nav class="navbar bg-base-300 shadow-sm">
-            <div class="navbar-start">
-                <div class="dropdown">
-                    <div tabindex="0"
-                         role="button"
-                         class="btn btn-ghost btn-square lg:hidden">
+            <div class="flex flex-1">
+                <details class="dropdown">
+                    <summary class="btn btn-ghost btn-square">
                         <MenuIcon />
-                    </div>
-                    <ul tabindex="-1"
-                        class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                    </summary>
+                    <ul class="menu dropdown-content bg-base-200 rounded-box w-52 p-2 shadow">
+                        <li>
+                            <RouterLink :to="{ name: routesNames.login }">{{ $t('users.login.title') }}
+                            </RouterLink>
+                        </li>
                     </ul>
-                </div>
+                </details>
 
-                <img class="ms-1"
-                     src="https://placeholder.pagebee.io/api/plain/32/32"
-                     style="height: 32px;" />
-                <RouterLink to="/"
-                            class="ms-2 text-xl">bigarrer</RouterLink>
+                <img class="ms-1 my-auto" src="https://placeholder.pagebee.io/api/plain/32/32" style="height: 32px;" />
+                <RouterLink to="/" class="ms-2 my-auto text-xl">bigarrer</RouterLink>
             </div>
 
-            <div class="navbar-end">
+            <div class="flex">
                 <SettingsMenu />
-                <UserMenu class="ms-1" />
             </div>
         </nav>
 
         <main class="flex flex-1 overflow-x-hidden relative">
             <router-view v-slot="{ Component, route }">
-                <transition v-if="route.meta.transition"
-                            :name="route.meta.transition">
+                <transition v-if="route.meta.transition" :name="route.meta.transition">
                     <component :is="Component" />
                 </transition>
-                <component v-else
-                           :is="Component" />
+                <component v-else :is="Component" />
             </router-view>
         </main>
 

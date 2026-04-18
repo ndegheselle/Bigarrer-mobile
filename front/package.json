@@ -11,6 +11,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
     "daisyui": "^5.5.19",
+    "locar": "^0.1.8",
     "lucide-vue-next": "^1.0.0",
     "pocketbase": "^0.26.8",
     "tailwindcss": "^4.1.18",

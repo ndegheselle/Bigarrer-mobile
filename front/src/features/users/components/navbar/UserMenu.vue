@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useAuth } from '@chapelure/auth/composables/auth';
 import { routesNames } from '@features/users/routes';
-import { LogOutIcon, UserPenIcon } from 'lucide-vue-next';
+import { LogOutIcon } from 'lucide-vue-next';
 
 const { isLoggedIn, logout } = useAuth();
-
 </script>
 
 <template>
@@ -22,11 +21,6 @@ const { isLoggedIn, logout } = useAuth();
             </div>
             <ul tabindex="-1"
                 class="menu dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                <li>
-                    <RouterLink to="/user/profil">
-                        <UserPenIcon /> {{ $t('profil.title') }}
-                    </RouterLink>
-                </li>
                 <li>
                     <a @click="logout">
                         <LogOutIcon /> {{ $t('users.logout') }}
