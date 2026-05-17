@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
 
     <application
@@ -14,9 +18,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bigarrer">
+
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
+
+        <!--
+            ARCore Geospatial API requires a Google Cloud API key with the
+            "ARCore API" enabled. Replace the placeholder below with your key.
+            See: https://developers.google.com/ar/develop/authorization
+        -->
+        <meta-data
+            android:name="com.google.android.ar.API_KEY"
+            android:value="@string/google_ar_api_key" />
 
         <activity
             android:name=".MainActivity"
@@ -26,7 +40,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
