@@ -1,5 +1,6 @@
 package com.lubriciel.bigarrer
 
+import android.view.MotionEvent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,63 +11,72 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.ar.core.Config
+import com.google.ar.core.Session
 import com.google.ar.core.TrackingState
+import com.lubriciel.bigarrer.service.CubePlacementService
 import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.ar.ARScene
+import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.ar.rememberARCameraNode
-import io.github.sceneview.math.Position
 import io.github.sceneview.node.CubeNode
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberNodes
-import kotlin.math.sqrt
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-private const val SPAWN_INTERVAL_MS = 500L
-private const val CUBE_SIZE = 0.15f
-private const val MIN_MOVE_DISTANCE = 0.1f
-// Offset cube downward so it sits below eye level
-private const val CUBE_Y_OFFSET = -0.3f
+private const val CUBE_SIZE = 0.2f
 
 @Composable
-fun ArCubeTrailScene() {
+fun ArCubeScene(cubePlacementService: CubePlacementService) {
     val engine = rememberEngine()
     val materialLoader = rememberMaterialLoader(engine)
     val cameraNode = rememberARCameraNode(engine)
     val childNodes = rememberNodes()
+    val coroutineScope = rememberCoroutineScope()
 
+    var arTracking by remember { mutableStateOf(false) }
+    var earthTracking by remember { mutableStateOf(false) }
     var cubeCount by remember { mutableIntStateOf(0) }
-    var isTracking by remember { mutableStateOf(false) }
-    // Camera position updated each frame from ARCore
-    var cameraPos by remember { mutableStateOf<FloatArray?>(null) }
-    var lastSpawnPos by remember { mutableStateOf<FloatArray?>(null) }
+    var savedLocationsLoaded by remember { mutableStateOf(false) }
+    var sessionRef by remember { mutableStateOf<Session?>(null) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(SPAWN_INTERVAL_MS)
+    fun spawnCubeOnAnchor(anchor: com.google.ar.core.Anchor) {
+        val anchorNode = AnchorNode(engine, anchor).apply {
+            addChildNode(
+                CubeNode(
+                    engine = engine,
+                    size = Float3(CUBE_SIZE),
+                    center = Float3(0f),
+                    materialLoader = materialLoader,
+                )
+            )
+        }
+        childNodes.add(anchorNode)
+        cubeCount++
+    }
 
-            val pos = cameraPos
-            if (!isTracking || pos == null) continue
+    // Restore previously saved cubes once both session and Earth tracking are ready
+    LaunchedEffect(earthTracking, sessionRef) {
+        if (!earthTracking || savedLocationsLoaded) return@LaunchedEffect
+        val session = sessionRef ?: return@LaunchedEffect
+        val earth = session.earth ?: return@LaunchedEffect
 
-            val last = lastSpawnPos
-            if (last != null) {
-                val dx = pos[0] - last[0]
-                val dy = pos[1] - last[1]
-                val dz = pos[2] - last[2]
-                if (sqrt(dx * dx + dy * dy + dz * dz) < MIN_MOVE_DISTANCE) continue
+        savedLocationsLoaded = true
+        val saved = cubePlacementService.loadAll()
+        for (location in saved) {
+            try {
+                val quat = floatArrayOf(
+                    location.quatX, location.quatY,
+                    location.quatZ, location.quatW
+                )
+                val anchor = earth.createAnchor(
+                    location.latitude, location.longitude, location.altitude, quat
+                )
+                spawnCubeOnAnchor(anchor)
+            } catch (_: Exception) {
+                // Anchor may fail if geospatial data is unavailable at that point
             }
-
-            val cube = CubeNode(
-                engine = engine,
-                size = Float3(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE),
-                center = Float3(0f, 0f, 0f),
-                materialLoader = materialLoader
-            ).apply {
-                worldPosition = Position(pos[0], pos[1] + CUBE_Y_OFFSET, pos[2])
-            }
-            childNodes.add(cube)
-            lastSpawnPos = pos.copyOf()
-            cubeCount++
         }
     }
 
@@ -76,26 +86,56 @@ fun ArCubeTrailScene() {
             engine = engine,
             childNodes = childNodes,
             cameraNode = cameraNode,
-            onSessionUpdated = { _, frame ->
-                val camera = frame.camera
-                isTracking = camera.trackingState == TrackingState.TRACKING
-                if (isTracking) {
-                    val pose = camera.pose
-                    cameraPos = floatArrayOf(pose.tx(), pose.ty(), pose.tz())
+            sessionConfiguration = { session, config ->
+                config.geospatialMode = Config.GeospatialMode.ENABLED
+                // Enable depth hit-testing when the device supports it
+                if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+                    config.depthMode = Config.DepthMode.AUTOMATIC
                 }
-            }
+            },
+            onSessionUpdated = { session, frame ->
+                sessionRef = session
+                arTracking = frame.camera.trackingState == TrackingState.TRACKING
+                earthTracking = session.earth?.trackingState == TrackingState.TRACKING
+            },
+            onTouchEvent = { motionEvent, hitResult ->
+                if (motionEvent.action == MotionEvent.ACTION_UP
+                    && hitResult != null
+                    && earthTracking
+                ) {
+                    val earth = sessionRef?.earth
+                    if (earth != null) {
+                        coroutineScope.launch {
+                            val location = cubePlacementService.placeAndSave(earth, hitResult)
+                            if (location != null) {
+                                val quat = floatArrayOf(
+                                    location.quatX, location.quatY,
+                                    location.quatZ, location.quatW
+                                )
+                                val anchor = earth.createAnchor(
+                                    location.latitude, location.longitude,
+                                    location.altitude, quat
+                                )
+                                spawnCubeOnAnchor(anchor)
+                            }
+                        }
+                    }
+                }
+                true
+            },
         )
 
         Text(
             text = when {
-                !isTracking -> "Move device slowly to initialize AR tracking"
-                else -> "Cubes placed: $cubeCount"
+                !arTracking   -> "Initializing AR…"
+                !earthTracking -> "Acquiring geospatial positioning…"
+                else          -> "Tap to place a cube  •  Placed: $cubeCount"
             },
             color = Color.White,
             fontSize = 16.sp,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 48.dp)
+                .padding(top = 48.dp, start = 16.dp, end = 16.dp),
         )
     }
 }

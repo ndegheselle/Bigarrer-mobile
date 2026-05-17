@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Bigarrer</string>
+    <!-- Replace with your Google Cloud API key (ARCore API must be enabled) -->
+    <string name="google_ar_api_key" translatable="false">YOUR_GOOGLE_CLOUD_API_KEY</string>
 </resources>
