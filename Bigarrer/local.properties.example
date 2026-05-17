@@ -1,0 +1,9 @@
+# Copy this file to local.properties (gitignored) and fill in your values.
+# local.properties is never committed to source control.
+
+# Google Cloud API key with the "ARCore API" enabled.
+# https://developers.google.com/ar/develop/authorization
+google.ar.api.key=YOUR_GOOGLE_CLOUD_API_KEY
+
+# Android SDK path (set automatically by Android Studio)
+# sdk.dir=/path/to/Android/Sdk

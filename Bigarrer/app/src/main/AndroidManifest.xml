@@ -30,7 +30,7 @@
         -->
         <meta-data
             android:name="com.google.android.ar.API_KEY"
-            android:value="@string/google_ar_api_key" />
+            android:value="${googleArApiKey}" />
 
         <activity
             android:name=".MainActivity"
