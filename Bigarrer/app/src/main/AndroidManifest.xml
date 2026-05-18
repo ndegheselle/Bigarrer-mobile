@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
 
     <application
@@ -21,7 +22,8 @@
 
         <meta-data
             android:name="com.google.ar.core"
-            android:value="required" />
+            android:value="required"
+            tools:replace="android:value" />
 
         <!--
             ARCore Geospatial API requires a Google Cloud API key with the
@@ -35,9 +37,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Bigarrer"
-            android:screenOrientation="portrait">
+            android:theme="@style/Theme.Bigarrer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

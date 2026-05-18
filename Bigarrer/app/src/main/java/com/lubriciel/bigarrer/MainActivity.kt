@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.lubriciel.bigarrer.service.CubePlacementService
-import com.lubriciel.bigarrer.service.SqliteLocationService
 import com.lubriciel.bigarrer.ui.theme.BigarrerTheme
 
 class MainActivity : ComponentActivity() {
@@ -45,13 +43,11 @@ class MainActivity : ComponentActivity() {
             requestPermissions.launch(requiredPermissions)
         }
 
-        val cubePlacementService = CubePlacementService(SqliteLocationService(applicationContext))
-
         setContent {
             BigarrerTheme {
                 val granted by permissionsGranted
                 if (granted) {
-                    ArCubeScene(cubePlacementService)
+                    ArCubeScene()
                 } else {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text(
