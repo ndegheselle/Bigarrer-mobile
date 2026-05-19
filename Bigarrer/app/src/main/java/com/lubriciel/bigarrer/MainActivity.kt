@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
             BigarrerTheme {
                 val granted by permissionsGranted
                 if (granted) {
-                    ArCubeScene()
+                    ArTouchPlacementScene()
                 } else {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text(

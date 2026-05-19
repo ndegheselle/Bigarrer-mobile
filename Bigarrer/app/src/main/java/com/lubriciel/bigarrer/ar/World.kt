@@ -19,11 +19,31 @@ import com.google.ar.core.TrackingState
  * Lifecycle: instantiate once per scene (typically inside a Compose `remember {}`),
  * forward [configureSession] from `ARScene(sessionConfiguration = ...)` and
  * [onSessionUpdated] from `ARScene(onSessionUpdated = ...)`.
+ *
+ * @param planeFindingMode Plane detection mode. Set to HORIZONTAL_AND_VERTICAL when
+ *   features need plane-based hit testing (e.g. touch placement).
+ * @param enableGeospatial Whether to enable the ARCore Geospatial API. Requires the
+ *   Google Cloud API key to be configured in the manifest.
  */
-class World {
+class World(
+    private val planeFindingMode: Config.PlaneFindingMode = Config.PlaneFindingMode.DISABLED,
+    private val enableGeospatial: Boolean = false,
+) {
 
     /** Whether the camera is currently tracking. Observable from Compose. */
     var isTracking: Boolean by mutableStateOf(false)
+        private set
+
+    /** Earth tracking state; STOPPED when geospatial is disabled or unavailable. */
+    var earthTrackingState: TrackingState by mutableStateOf(TrackingState.STOPPED)
+        private set
+
+    /** Most recent ARCore session; available after the first frame update. */
+    var latestSession: Session? = null
+        private set
+
+    /** Most recent ARCore frame; available after the first frame update. */
+    var latestFrame: Frame? = null
         private set
 
     private val updateListeners = mutableListOf<UpdateListener>()
@@ -45,12 +65,22 @@ class World {
             else
                 Config.DepthMode.DISABLED
         config.lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
-        config.planeFindingMode = Config.PlaneFindingMode.DISABLED
+        config.planeFindingMode = planeFindingMode
+        if (enableGeospatial) {
+            // Instant placement lets objects be placed before planes are detected.
+            config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
+            if (session.isGeospatialModeSupported(Config.GeospatialMode.ENABLED)) {
+                config.geospatialMode = Config.GeospatialMode.ENABLED
+            }
+        }
     }
 
     /** Forward this from `ARScene(onSessionUpdated = ...)`. */
     fun onSessionUpdated(session: Session, frame: Frame) {
+        latestSession = session
+        latestFrame = frame
         isTracking = frame.camera.trackingState == TrackingState.TRACKING
+        earthTrackingState = session.earth?.trackingState ?: TrackingState.STOPPED
         if (!isTracking) return
         // Iterate over a snapshot so listeners can safely add/remove during dispatch.
         updateListeners.toList().forEach { it.onArUpdate(session, frame) }
