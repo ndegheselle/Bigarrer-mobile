@@ -1,5 +1,6 @@
 package com.lubriciel.bigarrer.ar.features
 
+import androidx.compose.ui.graphics.Color
 import com.google.ar.core.Frame
 import com.google.ar.core.Session
 import com.lubriciel.bigarrer.ar.Renderer
@@ -12,18 +13,18 @@ import kotlin.math.sqrt
  *
  * Subscribes to per-frame updates from a [World] and, every time the AR camera has moved
  * at least [spacingM] meters from the previously placed cube, asks the [Renderer] to
- * spawn a new one. Owns the "where am I, where was the last cube, do I need a new one
- * yet" decision — the layer above (the Composable) doesn't see any of that, and the
- * layers below (Renderer, World) don't know about the trail rule.
+ * spawn a new one using [color].
  *
  * @param world AR scaffolding to subscribe to.
  * @param renderer Render API used to materialize cubes.
  * @param spacingM Minimum distance the camera must travel between cubes, in meters.
+ * @param color Color of each trail cube.
  */
 class CubeTrail(
     private val world: World,
     private val renderer: Renderer,
     private val spacingM: Float = 1.0f,
+    private val color: Color = Color(0xFF4FC3F7),
 ) {
 
     private var lastCubePos: Position? = null
@@ -48,7 +49,7 @@ class CubeTrail(
         val last = lastCubePos
         if (last != null && distance(current, last) < spacingM) return
 
-        renderer.spawnCubeAt(session, pose)
+        renderer.spawnCubeAt(session, pose, color)
         lastCubePos = current
     }
 
