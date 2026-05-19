@@ -1,5 +1,6 @@
 package com.lubriciel.bigarrer.ar.features
 
+import androidx.compose.ui.graphics.Color
 import com.google.ar.core.DepthPoint
 import com.google.ar.core.InstantPlacementPoint
 import com.google.ar.core.Plane
@@ -25,10 +26,12 @@ import com.lubriciel.bigarrer.ar.World
  *
  * @param world AR scaffolding that exposes the latest session/frame and tracking state.
  * @param renderer Render API used to materialize cubes.
+ * @param color Color of each placed cube.
  */
 class TouchPlacement(
     private val world: World,
     private val renderer: Renderer,
+    private val color: Color = Color(0xFFFF5722),
 ) {
 
     /**
@@ -62,10 +65,9 @@ class TouchPlacement(
                 geoPose.altitude,
                 geoPose.eastUpSouthQuaternion,
             )
-            renderer.spawnCubeAtAnchor(anchor)
+            renderer.spawnCubeAtAnchor(anchor, color)
         } else {
-            // Geospatial unavailable — fall back to a standard local anchor.
-            renderer.spawnCubeAt(session, hit.hitPose)
+            renderer.spawnCubeAt(session, hit.hitPose, color)
         }
     }
 }

@@ -35,8 +35,8 @@ import io.github.sceneview.rememberView
  *  - [TouchPlacement] : orange cubes placed on tap, anchored via the Geospatial API
  *                       (falls back to a local anchor while Earth is initializing).
  *
- * The two features share one [World] (session config, frame fanout) but each owns a
- * separate [Renderer] so their cubes have distinct colours.
+ * Both features share one [World] and one [Renderer]; each passes its own color at
+ * spawn time.
  */
 @Composable
 fun ArCombinedScene() {
@@ -53,34 +53,20 @@ fun ArCombinedScene() {
             enableGeospatial = true,
         )
     }
-
-    // Light-blue trail renderer — one cube per meter of camera movement.
-    val trailRenderer = remember(engine, materialLoader) {
-        Renderer(
-            engine = engine,
-            materialLoader = materialLoader,
-            childNodes = childNodes,
-            cubeColor = Color(0xFF4FC3F7),
-        )
-    }
-    // Orange tap renderer — one cube per screen tap.
-    val tapRenderer = remember(engine, materialLoader) {
-        Renderer(
-            engine = engine,
-            materialLoader = materialLoader,
-            childNodes = childNodes,
-            cubeColor = Color(0xFFFF5722),
-        )
+    val renderer = remember(engine, materialLoader) {
+        Renderer(engine = engine, materialLoader = materialLoader, childNodes = childNodes)
     }
 
-    val cubeTrail = remember(world, trailRenderer) {
-        CubeTrail(world = world, renderer = trailRenderer)
+    val cubeTrail = remember(world, renderer) {
+        CubeTrail(world = world, renderer = renderer, color = Color(0xFF4FC3F7))
     }
     DisposableEffect(cubeTrail) {
         onDispose { cubeTrail.dispose() }
     }
 
-    val touchPlacement = remember(world, tapRenderer) { TouchPlacement(world, tapRenderer) }
+    val touchPlacement = remember(world, renderer) {
+        TouchPlacement(world = world, renderer = renderer, color = Color(0xFFFF5722))
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ARScene(
@@ -110,7 +96,7 @@ fun ArCombinedScene() {
             else -> "Locating…"
         }
         Text(
-            text = "$geoLabel  •  Trail: ${trailRenderer.cubeCount}  •  Tap: ${tapRenderer.cubeCount}",
+            text = "$geoLabel  •  Placed: ${renderer.cubeCount}",
             color = Color.White,
             fontSize = 16.sp,
             modifier = Modifier
